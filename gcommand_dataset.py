@@ -108,7 +108,9 @@ class GCommandLoader(data.Dataset):
         spects = make_dataset(root, class_to_idx)
 
         if len(spects) == 0:
-            raise (RuntimeError("Found 0 sound files in subfolders of: " + root + "Supported audio file extensions are: " + ",".join(AUDIO_EXTENSIONS)))
+            raise (RuntimeError(
+                "Found 0 sound files in subfolders of: " + root + "Supported audio file extensions are: " + ",".join(
+                    AUDIO_EXTENSIONS)))
 
         self.root = root
         self.spects = spects
@@ -148,11 +150,11 @@ class GCommandLoader(data.Dataset):
 
 import torch
 
-dataset = GCommandLoader('gcommands/train')
+dataset = GCommandLoader('gcommands/tmp')
 
 train_loader = torch.utils.data.DataLoader(
-        dataset, batch_size=10, shuffle=True,
-         pin_memory=True)
+    dataset, batch_size=10, shuffle=True,
+    pin_memory=True)
 
-for input,label in train_loader:
+for input, label in train_loader:
     print(f"input shape : {input.shape}, label shape : {len(label)}")
