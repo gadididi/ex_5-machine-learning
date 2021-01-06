@@ -150,11 +150,11 @@ class GCommandLoader(data.Dataset):
 
 import torch
 
-dataset = GCommandLoader('gcommands/tmp')
+# dataset = GCommandLoader('gcommands/tmp')
 
-train_loader = torch.utils.data.DataLoader(
-    dataset, batch_size=10, shuffle=True,
-    pin_memory=True)
+ # train_loader = torch.utils.data.DataLoader(
+    # dataset, batch_size=10, shuffle=True,
+    # pin_memory=True)
 
-for input, label in train_loader:
-    print(f"input shape : {input.shape}, label shape : {len(label)}")
+# for input, label in train_loader:
+    # print(f"input shape : {input.shape}, label shape : {len(label)}")
