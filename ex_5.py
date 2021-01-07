@@ -8,24 +8,21 @@ import matplotlib.pyplot as plt
 from cnn import Net
 
 from gcommand_dataset import GCommandLoader
-IMG_SIZE = 4000
-EPOCHS = 40
-LR = 0.07
-best_model = Net(IMG_SIZE)
+
+
+EPOCHS = 100
+LR = 0.01
+best_model = Net()
 
 
 def train(train_loader):
     best_model.train()
     losses = 0
-    correct = 0
     # getting the training set
     for batch_idx, (data_, labels) in enumerate(train_loader):
         best_model.optimizer.zero_grad()
         output_train = best_model(data_)
-        loss = F.nll_loss(output_train, labels)
-        # losses += F.nll_loss(output_train, labels, reduction="mean").item()
-        pred = output_train.max(1, keepdim=True)[1]
-        correct += pred.eq(labels.view_as(pred)).cpu().sum()
+        loss = best_model.criterion(output_train, labels)
         loss.backward()
         best_model.optimizer.step()
 
@@ -33,13 +30,11 @@ def train(train_loader):
 def test(val_loader):
     best_model.eval()
     test_loss = 0
-    tmp_loss = 0
     correct = 0
     with torch.no_grad():
         for data_, target in val_loader:
             output = best_model(data_)
-            # tmp_loss += F.nll_loss(output, target, reduction="mean").item()
-            test_loss += F.nll_loss(output, target, reduction="mean").item()
+            test_loss += best_model.criterion(output, target).item()
             # get index of the max log - probability
             pred = output.max(1, keepdim=True)[1]
             correct += pred.eq(target.view_as(pred)).cpu().sum()
@@ -52,13 +47,14 @@ def test(val_loader):
 
 def run_model(train_loader, val_loader):
     for e in range(1, EPOCHS + 1):
+        print("epoch number: ", e)
         train(train_loader)
         test(val_loader)
 
 
 def main():
-    train_set = GCommandLoader("./short_train")
-    val_set = GCommandLoader("./short_valid")
+    train_set = GCommandLoader("./gcommands/train")
+    val_set = GCommandLoader("./gcommands/valid")
     # test_set = GCommandLoader("./gcommands/test")
     train_loader = torch.utils.data.DataLoader(
         train_set, batch_size=64, shuffle=True,

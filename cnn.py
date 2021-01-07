@@ -1,41 +1,52 @@
 import torch.nn as nn
 import torch
 import torch.nn.functional
+import torch.nn.functional as F
 
 
 class Net(nn.Module):
-    def __init__(self, image_size):
+    def __init__(self):
         super(Net, self).__init__()
-        self.image_size = image_size
         self.cnn_layers = nn.Sequential(
-            # TODO: Change the sizes
-            # TODO: Do we need BatchNorm2D?
-            nn.Conv2d(1, 4, kernel_size=3, stride=1, padding=1, bias=True),
-            # nn.BatchNorm2d(4),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(kernel_size=2, stride=2),
-            # Defining another 2D convolution layer
-            nn.Conv2d(4, 4, kernel_size=3, stride=1, padding=1, bias=True),
-            # nn.BatchNorm2d(4),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(kernel_size=2, stride=2),
+            # first
+            nn.Conv2d(1, 6, kernel_size=5),
+            nn.ReLU(),
+            nn.BatchNorm2d(6),
+            nn.MaxPool2d(kernel_size=3, stride=2),
+
+            # second
+            nn.Conv2d(6, 12, kernel_size=5),
+            nn.ReLU(),
+            nn.BatchNorm2d(12),
+            nn.MaxPool2d(kernel_size=3, stride=2),
+
+            # third
+            nn.Conv2d(12, 16, kernel_size=5),
+            nn.ReLU(),
+            nn.BatchNorm2d(16),
+            nn.MaxPool2d(kernel_size=3, stride=2),
         )
 
         self.linear_layers = nn.Sequential(
-            # TODO: Change the sizes
-            nn.Linear(self.image_size, 1000),
-            nn.BatchNorm1d(1000),  # applying batch norm
+            # first
+            nn.Linear(1920, 512),
             nn.ReLU(),
-            nn.Linear(1000, 250),
-            nn.BatchNorm1d(250),
+            nn.BatchNorm1d(512),
+
+            # second
+            nn.Linear(512, 128),
             nn.ReLU(),
-            nn.Linear(250, 30)
+            nn.BatchNorm1d(128),
+
+            # third
+            nn.Linear(128, 30)
         )
         self.optimizer = torch.optim.Adam(self.parameters(), lr=0.07)
+        self.criterion = nn.CrossEntropyLoss()
 
     # Defining the forward pass
     def forward(self, x):
         x = self.cnn_layers(x)
         x = x.view(x.size(0), -1)
         x = self.linear_layers(x)
-        return x
+        return F.log_softmax(x, dim=1)
