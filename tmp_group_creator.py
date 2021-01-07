@@ -9,7 +9,7 @@ path_test = "./gcommands/test"
 compath = "C:/Users/Gadi/Documents/C grade/machine learning/ex5/ex_5/ex_5-machine-learning/"
 
 
-def create(folder, kind, original):
+def create(folder, kind, original,items):
     os.mkdir(folder)
     subdir = [x[0] for x in os.walk(original)]
     subdir = subdir[1:]
@@ -21,7 +21,7 @@ def create(folder, kind, original):
         for file in os.listdir(m_dir):
             if file == ".":
                 continue
-            if num_file > 100:
+            if num_file > items:
                 num_file = 0
                 break
             num_file += 1
@@ -29,5 +29,5 @@ def create(folder, kind, original):
                             compath + new_place + "/" + file)
 
 
-create("short_train", "train", path_train)
-create("short_valid", "valid", path_valid)
+create("short_train", "train", path_train,100)
+create("short_valid", "valid", path_valid,20)
