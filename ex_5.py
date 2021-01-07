@@ -8,10 +8,11 @@ import matplotlib.pyplot as plt
 from cnn import Net
 
 from gcommand_dataset import GCommandLoader
-IMG_SIZE = 768
+
+
 EPOCHS = 100
-LR = 0.07
-best_model = Net(768)
+LR = 0.01
+best_model = Net()
 
 
 def train(train_loader):
@@ -46,13 +47,14 @@ def test(val_loader):
 
 def run_model(train_loader, val_loader):
     for e in range(1, EPOCHS + 1):
+        print("epoch number: ", e)
         train(train_loader)
         test(val_loader)
 
 
 def main():
-    train_set = GCommandLoader("./short_train")
-    val_set = GCommandLoader("./short_valid")
+    train_set = GCommandLoader("./gcommands/train")
+    val_set = GCommandLoader("./gcommands/valid")
     # test_set = GCommandLoader("./gcommands/test")
     train_loader = torch.utils.data.DataLoader(
         train_set, batch_size=64, shuffle=True,

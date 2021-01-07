@@ -5,33 +5,41 @@ import torch.nn.functional as F
 
 
 class Net(nn.Module):
-    def __init__(self, image_size):
+    def __init__(self):
         super(Net, self).__init__()
-        self.image_size = image_size
         self.cnn_layers = nn.Sequential(
-            # TODO: Change the sizes
-            # TODO: Do we need BatchNorm2D?
-            nn.Conv2d(1, 32, kernel_size=3, stride=4, padding=0, bias=True),
-            nn.BatchNorm2d(32),
-            nn.ReLU(inplace=True),
+            # first
+            nn.Conv2d(1, 6, kernel_size=5),
+            nn.ReLU(),
+            nn.BatchNorm2d(6),
             nn.MaxPool2d(kernel_size=3, stride=2),
-            # Defining another 2D convolution layer
-            nn.Conv2d(32, 96, kernel_size=3, stride=1, padding=2, bias=True),
+
+            # second
+            nn.Conv2d(6, 12, kernel_size=5),
+            nn.ReLU(),
+            nn.BatchNorm2d(12),
             nn.MaxPool2d(kernel_size=3, stride=2),
-            nn.BatchNorm2d(96),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(96, 256, kernel_size=3, stride=1, padding=1, bias=True),
-            nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1, bias=True),
-            nn.Conv2d(256, 96, kernel_size=3, stride=1, padding=1, bias=True),
+
+            # third
+            nn.Conv2d(12, 16, kernel_size=5),
+            nn.ReLU(),
+            nn.BatchNorm2d(16),
             nn.MaxPool2d(kernel_size=3, stride=2),
         )
 
         self.linear_layers = nn.Sequential(
-            # TODO: Change the sizes
-            nn.Linear(self.image_size, 100),
-            nn.BatchNorm1d(100),  # applying batch norm
+            # first
+            nn.Linear(1920, 512),
             nn.ReLU(),
-            nn.Linear(100, 30)
+            nn.BatchNorm1d(512),
+
+            # second
+            nn.Linear(512, 128),
+            nn.ReLU(),
+            nn.BatchNorm1d(128),
+
+            # third
+            nn.Linear(128, 30)
         )
         self.optimizer = torch.optim.Adam(self.parameters(), lr=0.07)
         self.criterion = nn.CrossEntropyLoss()
@@ -41,25 +49,4 @@ class Net(nn.Module):
         x = self.cnn_layers(x)
         x = x.view(x.size(0), -1)
         x = self.linear_layers(x)
-        return x
-
-
-# class Net(nn.Module):
-#     def __init__(self):
-#         super(Net, self).__init__()
-#         self.conv1 = nn.Conv2d(1, 6, 5)
-#         self.pool = nn.MaxPool2d(2, 2)
-#         self.conv2 = nn.Conv2d(6, 16, 5)
-#         self.fc1 = nn.Linear(16 * 37 * 22, 120)
-#         self.fc2 = nn.Linear(120, 84)
-#         self.fc3 = nn.Linear(84, 10)
-#         self.optimizer = torch.optim.Adam(self.parameters(), lr=0.07)
-#
-#     def forward(self, x):
-#         x = self.pool(F.relu(self.conv1(x)))
-#         x = self.pool(F.relu(self.conv2(x)))
-#         x = x.view(-1, 16 * 37 * 22)
-#         x = F.relu(self.fc1(x))
-#         x = F.relu(self.fc2(x))
-#         x = self.fc3(x)
-#         return x
+        return F.log_softmax(x, dim=1)
