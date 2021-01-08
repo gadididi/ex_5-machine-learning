@@ -10,7 +10,7 @@ from cnn import Net
 from gcommand_dataset import GCommandLoader
 
 
-EPOCHS = 100
+EPOCHS = 20
 LR = 0.01
 best_model = Net()
 
