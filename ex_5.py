@@ -6,23 +6,28 @@ from torch.utils import data
 import torch.nn.functional as F
 import matplotlib.pyplot as plt
 from cnn import Net
-
 from gcommand_dataset import GCommandLoader
 
-
+cuda = torch.cuda.is_available()
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(device)
 EPOCHS = 20
 LR = 0.01
 best_model = Net()
+best_model.to(device)
 
 
 def train(train_loader):
     best_model.train()
     losses = 0
     # getting the training set
-    for batch_idx, (data_, labels) in enumerate(train_loader):
+    for batch_idx, (data, target) in enumerate(train_loader):
+        data = data.to(device)
+        target = target.to(device)
+
+        output_train = best_model(data)
+        loss = F.nll_loss(output_train.squeeze(), target)
         best_model.optimizer.zero_grad()
-        output_train = best_model(data_)
-        loss = best_model.criterion(output_train, labels)
         loss.backward()
         best_model.optimizer.step()
 
@@ -32,17 +37,19 @@ def test(val_loader):
     test_loss = 0
     correct = 0
     with torch.no_grad():
-        for data_, target in val_loader:
-            output = best_model(data_)
+        correct = 0
+        total = 0
+        for data, target in val_loader:
+            data = data.to(device)
+            target = target.to(device)
+            output = best_model(data)
             test_loss += best_model.criterion(output, target).item()
             # get index of the max log - probability
-            pred = output.max(1, keepdim=True)[1]
-            correct += pred.eq(target.view_as(pred)).cpu().sum()
-    test_loss /= len(val_loader.dataset)
-    print("\nTests set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n".format(test_loss, correct,
-                                                                                  len(val_loader.dataset),
-                                                                                  100. * correct / len(
-                                                                                      val_loader.sampler)))
+            _, predicted = torch.max(output.data, 1)
+            total += target.size(0)
+            correct += (predicted == target).sum().item()
+
+        print('Test Accuracy of the model: {} %'.format((correct / total) * 100))
 
 
 def run_model(train_loader, val_loader):
