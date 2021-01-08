@@ -53,8 +53,8 @@ def run_model(train_loader, val_loader):
 
 
 def main():
-    train_set = GCommandLoader("./gcommands/train")
-    val_set = GCommandLoader("./gcommands/valid")
+    train_set = GCommandLoader("./short_train")
+    val_set = GCommandLoader("./short_valid")
     # test_set = GCommandLoader("./gcommands/test")
     train_loader = torch.utils.data.DataLoader(
         train_set, batch_size=64, shuffle=True,
