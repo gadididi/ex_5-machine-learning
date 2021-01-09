@@ -43,10 +43,8 @@ def get_likely_index(tensor):
 
 def test(val_loader):
     best_model.eval()
-    test_loss = 0
     with torch.no_grad():
         correct = 0
-        total = 0
         for data, target in val_loader:
             data = data.to(device)
             target = target.to(device)
@@ -55,7 +53,7 @@ def test(val_loader):
             correct += number_of_correct(pred, target)
 
     print(
-        f"\n\tAccuracy: {correct}/{len(val_loader.dataset)} ({100. * correct / len(val_loader.dataset):.0f}%)\n")
+        f"\n\tAccuracy: {correct}/{len(val_loader.dataset)} ({100. * correct / len(val_loader.dataset):.2f}%)\n")
 
 
 def prediction(test_loader):
