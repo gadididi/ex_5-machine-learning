@@ -12,7 +12,6 @@ cuda = torch.cuda.is_available()
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(device)
 EPOCHS = 100
-LR = 0.01
 best_model = Net()
 best_model.to(device)
 
