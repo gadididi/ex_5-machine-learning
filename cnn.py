@@ -42,7 +42,7 @@ class Net(nn.Module):
             # third
             nn.Linear(128, 30)
         )
-        self.optimizer = torch.optim.Adam(self.parameters(), lr=0.01)
+        self.optimizer = torch.optim.Adam(self.parameters(), lr=0.001)
         self.criterion = nn.CrossEntropyLoss()
 
     # Defining the forward pass

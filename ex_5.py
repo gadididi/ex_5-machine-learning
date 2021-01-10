@@ -11,7 +11,7 @@ from gcommand_dataset import GCommandLoader
 cuda = torch.cuda.is_available()
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(device)
-EPOCHS = 100
+EPOCHS = 1
 best_model = Net()
 best_model.to(device)
 
@@ -58,19 +58,21 @@ def test(val_loader):
 
 def prediction(test_loader):
     best_model.eval()
-    f = open("test_y", "w")
     i = 0
+    predicts_list = []
     with torch.no_grad():
-        for images, labels in test_loader:
-            images, labels = images.to(device), labels.to(device)
-            outputs = best_model(images)
+        for image, labels in test_loader:
+            image, labels = image.to(device), labels.to(device)
+            outputs = best_model(image)
             _, predicted = torch.max(outputs.data, 1)
-            # print to file
-            for image, predict in zip(images, predicted):
-                data = str(test_loader.dataset.spects[i][0].split("/")[5])
-                i += 1
-                f.write(data + ", " + str(predict.item()))
-                f.write("\n")
+            data_ = int(test_loader.dataset.spects[i][0].split("\\")[2].split('.')[0])
+            predicts_list.append((data_, predicted))
+            i += 1
+    predicts_list = sorted(predicts_list)
+    f = open("test_y", "w")
+    for e in predicts_list:
+        line = str(e[0]) + ".wav, " + str(e[1]) + '\n'
+        f.write(line)
     f.close()
 
 
@@ -86,15 +88,15 @@ def run_model(train_loader, val_loader, test_loader=None):
 def main():
     train_set = GCommandLoader("./short_train")
     val_set = GCommandLoader("./short_valid")
-    # test_set = GCommandLoader("./gcommands/test")
+    test_set = GCommandLoader("./gcommands/test")
     train_loader = torch.utils.data.DataLoader(
         train_set, batch_size=64, shuffle=True,
         pin_memory=True)
     val_loader = torch.utils.data.DataLoader(
         val_set, batch_size=64, shuffle=True,
         pin_memory=True)
-    # test_loader = torch.utils.data.DataLoader(test_set)
-    run_model(train_loader, val_loader, test_loader=None)
+    test_loader = torch.utils.data.DataLoader(test_set)
+    run_model(train_loader, val_loader, test_loader)
 
 
 if __name__ == '__main__':
