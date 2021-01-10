@@ -9,33 +9,33 @@ class Net(nn.Module):
         super(Net, self).__init__()
         self.cnn_layers = nn.Sequential(
             # first
-            nn.Conv2d(1, 32, kernel_size=5, stride=2, padding=1),
+            nn.Conv2d(1, 16, kernel_size=5, stride=2, padding=2),
             nn.ReLU(),
-            nn.BatchNorm2d(32),
-            nn.MaxPool2d(kernel_size=5, stride=1),
+            nn.BatchNorm2d(16),
+            nn.MaxPool2d(kernel_size=2, stride=2),
 
             # second
-            nn.Conv2d(32, 64, kernel_size=5, stride=1, padding=0),
+            nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.BatchNorm2d(64),
-            nn.MaxPool2d(kernel_size=3, stride=2),
+            nn.BatchNorm2d(32),
+            nn.MaxPool2d(kernel_size=2, stride=2),
 
             # third
-            nn.Conv2d(64, 40, kernel_size=3, stride=1, padding=0),
+            nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.BatchNorm2d(40),
-            nn.MaxPool2d(kernel_size=3, stride=2),
+            nn.BatchNorm2d(64),
+            nn.MaxPool2d(kernel_size=2, stride=2),
 
         )
 
         self.linear_layers = nn.Sequential(
             # first
-            nn.Linear(5120, 1024),
+            nn.Linear(1280, 320),
             nn.ReLU(),
-            nn.BatchNorm1d(1024),
+            nn.BatchNorm1d(320),
 
             # second
-            nn.Linear(1024, 128),
+            nn.Linear(320, 128),
             nn.ReLU(),
             nn.BatchNorm1d(128),
 
