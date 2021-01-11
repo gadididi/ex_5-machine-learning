@@ -65,7 +65,7 @@ def prediction(test_loader, classes):
             image, labels = image.to(device), labels.to(device)
             output = best_model(image)
             predicted = output.data.max(1, keepdim=True)[1].item()
-            data_ = int(test_loader.dataset.spects[i][0].split("\\")[2].split('.')[0])
+            data_ = int(test_loader.dataset.spects[i][0].split("/")[4].split('.')[0])
             predicts_list.append((data_, predicted))
             i += 1
     predicts_list = sorted(predicts_list)
@@ -87,8 +87,8 @@ def run_model(train_loader, val_loader, test_loader=None):
 
 
 def main():
-    train_set = GCommandLoader("./short_train")
-    val_set = GCommandLoader("./short_valid")
+    train_set = GCommandLoader("./gcommands/train")
+    val_set = GCommandLoader("./gcommands/valid")
     test_set = GCommandLoader("./gcommands/test")
     train_loader = torch.utils.data.DataLoader(
         train_set, batch_size=64, shuffle=True,
