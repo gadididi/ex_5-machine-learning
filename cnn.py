@@ -30,12 +30,12 @@ class Net(nn.Module):
 
         self.linear_layers = nn.Sequential(
             # first
-            nn.Linear(1280, 320),
+            nn.Linear(3840, 1024),
             nn.ReLU(),
-            nn.BatchNorm1d(320),
+            nn.BatchNorm1d(1024),
 
             # second
-            nn.Linear(320, 128),
+            nn.Linear(1024, 128),
             nn.ReLU(),
             nn.BatchNorm1d(128),
 
