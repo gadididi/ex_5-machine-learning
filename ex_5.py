@@ -11,7 +11,7 @@ from gcommand_dataset import GCommandLoader
 cuda = torch.cuda.is_available()
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(device)
-EPOCHS = 40
+EPOCHS = 30
 best_model = Net()
 best_model.to(device)
 
