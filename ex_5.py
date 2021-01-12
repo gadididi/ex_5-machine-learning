@@ -11,7 +11,7 @@ from gcommand_dataset import GCommandLoader
 cuda = torch.cuda.is_available()
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(device)
-EPOCHS = 40
+EPOCHS = 30
 best_model = Net()
 best_model.to(device)
 USAGE = "ex_5.py <path_to_train> <path_to_valid> <path_to_test>"
@@ -66,7 +66,7 @@ def prediction(test_loader, classes):
             image, labels = image.to(device), labels.to(device)
             output = best_model(image)
             predicted = output.data.max(1, keepdim=True)[1].item()
-            data_ = int(test_loader.dataset.spects[i][0].split("\\")[2].split('.')[0])
+            data_ = int(test_loader.dataset.spects[i][0].split("/")[4].split('.')[0])
             predicts_list.append((data_, predicted))
             i += 1
     predicts_list = sorted(predicts_list)
