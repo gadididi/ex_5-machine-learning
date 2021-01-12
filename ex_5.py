@@ -14,6 +14,7 @@ print(device)
 EPOCHS = 40
 best_model = Net()
 best_model.to(device)
+USAGE = "ex_5.py <path_to_train> <path_to_valid> <path_to_test>"
 
 
 def train(train_loader):
@@ -87,9 +88,12 @@ def run_model(train_loader, val_loader, test_loader=None):
 
 
 def main():
-    train_set = GCommandLoader("./short_train")
-    val_set = GCommandLoader("./short_valid")
-    test_set = GCommandLoader("./gcommands/test")
+    if len(sys.argv) < 4:
+        print(USAGE)
+        exit(1)
+    train_set = GCommandLoader(sys.argv[1])
+    val_set = GCommandLoader(sys.argv[2])
+    test_set = GCommandLoader(sys.argv[3])
     train_loader = torch.utils.data.DataLoader(
         train_set, batch_size=64, shuffle=True,
         pin_memory=True)
